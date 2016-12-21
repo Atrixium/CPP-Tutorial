@@ -2,9 +2,29 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <string>
+#include <math.h>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+
+class vec2
+{
+    float x;
+    float y;
+
+public:
+    float getX() {return x;};
+    float getY() {return y;};
+    void setX(float i) {x = i ;};
+    void setY(float i) {y = i ;};
+
+    void add(vec2 vec);
+    void mult(int scaler);
+    void sub(vec2 vec);
+    float getMag() {return sqrt( (x*x) + (y*y) );};
+    void setMag(float mag);
+    void normalize();
+};
 
 
 void logSDLError(std::ostream &os, const std::string &msg);
@@ -42,8 +62,15 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    SDL_Texture *background = loadTexture("Images/background.bmp", renderer);
-    SDL_Texture *image = loadTexture("Images/image.bmp",renderer);
+    if( (IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
+    {
+        logSDLError(std::cout, "IMG_init");
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_Texture *background = loadTexture("Images/background.png", renderer);
+    SDL_Texture *image = loadTexture("Images/image.png",renderer);
     if(background == nullptr || image == nullptr)
     {
         logSDLError(std::cout, "loadTexture");
@@ -57,13 +84,15 @@ int main(int argc, char **argv)
 
     SDL_RenderClear(renderer);
 
+    int scaler = 3;
+
     int bW, bH;
     SDL_QueryTexture(background,NULL,NULL,&bW, &bH);
-    for (int i = 0; i < SCREEN_HEIGHT; i = i + bH)
+    for (int i = 0; i < SCREEN_HEIGHT; i = i + bH / scaler)
     {
-        for (int j = 0; j < SCREEN_WIDTH; j = j + bW)
+        for (int j = 0; j < SCREEN_WIDTH; j = j + bW / scaler)
         {
-            renderTexture(background, renderer, j, i);
+            renderTexture(background, renderer, j, i, bW / scaler, bH / scaler);
         }
     }
 
@@ -71,8 +100,18 @@ int main(int argc, char **argv)
     SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
     renderTexture(image, renderer, SCREEN_WIDTH/2 - iW/2, SCREEN_HEIGHT/2 - iH/2);
 
+    vec2 v;
+    v.setX(1);
+    v.setY(1);
+
+    std::cout << v.getX() << "," << v.getY() << std::endl;
+
+    v.setMag(25);
+
+    std::cout << v.getX() << "," << v.getY() << std::endl;
+
     SDL_RenderPresent(renderer);
-    SDL_Delay(2000);
+    //SDL_Delay(2000);
 
     SDL_DestroyTexture(background);
     SDL_DestroyTexture(image);
@@ -101,12 +140,9 @@ SDL_Texture* loadTexture(const std::string &path, SDL_Renderer *renderer)
 
 void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y)
 {
-    SDL_Rect dst;
-    dst.x = x;
-    dst.y = y;
-
-    SDL_QueryTexture(texture, NULL, NULL, &dst.w, &dst.h);
-    SDL_RenderCopy(renderer, texture, NULL, &dst);
+    int w, h;
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+    renderTexture(texture, renderer, x, y, w, h);
 }
 
 void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y, int w, int h)
@@ -120,13 +156,34 @@ void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y, i
     SDL_RenderCopy(renderer, texture, NULL, &dst);
 }
 
-void cleanup(SDL_Texture *tex1, SDL_Texture *tex2, SDL_Renderer *ren, SDL_Window *win)
+void vec2::add(vec2 vec)
 {
-    SDL_DestroyTexture(tex1);
-    if(tex1!= nullptr)
-    SDL_DestroyTexture(tex2);
-    if(ren != nullptr)
-    SDL_DestroyRenderer(ren);
-    if(win != nullptr)
-    SDL_DestroyWindow(win);
+    this->x += vec.x;
+    this->y += vec.y;
+
+}
+
+void vec2::mult(int scaler)
+{
+    this->x *= scaler;
+    this->y *= scaler;
+}
+
+void vec2::sub(vec2 vec)
+{
+    this->x -= vec.x;
+    this->y -= vec.y;
+}
+
+void vec2::normalize()
+{
+    float mag = this->getMag();
+    this->x = this->x / mag;
+    this->y = this->y / mag;
+}
+
+void vec2::setMag(float mag)
+{
+    this->normalize();
+    this->mult(mag);
 }
