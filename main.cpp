@@ -12,6 +12,7 @@ void logSDLError(std::ostream &os, const std::string &msg);
 SDL_Texture* loadTexture(const std::string &path, SDL_Renderer *renderer);
 
 void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y);
+void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y, int w, int h);
 
 void cleanup(SDL_Texture *tex1, SDL_Texture *tex2 = nullptr, SDL_Renderer *ren = nullptr, SDL_Window *win = nullptr);
 
@@ -105,6 +106,17 @@ void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y)
     dst.y = y;
 
     SDL_QueryTexture(texture, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy(renderer, texture, NULL, &dst);
+}
+
+void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y, int w, int h)
+{
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    dst.w = w;
+    dst.h = h;
+
     SDL_RenderCopy(renderer, texture, NULL, &dst);
 }
 
