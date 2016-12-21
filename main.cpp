@@ -1,9 +1,11 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <string>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+
 
 void logSDLError(std::ostream &os, const std::string &msg);
 
@@ -63,9 +65,19 @@ int main(int argc, char **argv)
             renderTexture(background, renderer, j, i);
         }
     }
+
+    int iW, iH;
+    SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
+    renderTexture(image, renderer, SCREEN_WIDTH/2 - iW/2, SCREEN_HEIGHT/2 - iH/2);
+
     SDL_RenderPresent(renderer);
     SDL_Delay(2000);
 
+    SDL_DestroyTexture(background);
+    SDL_DestroyTexture(image);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return 0;
 }
@@ -78,21 +90,10 @@ void logSDLError(std::ostream &os, const std::string &msg)
 
 SDL_Texture* loadTexture(const std::string &path, SDL_Renderer *renderer)
 {
-    SDL_Texture *texture = nullptr;
-
-    SDL_Surface *bmp = SDL_LoadBMP(path.c_str());
-    if (bmp != nullptr)
+    SDL_Texture *texture = IMG_LoadTexture(renderer, path.c_str());
+    if (texture == nullptr)
     {
-        texture = SDL_CreateTextureFromSurface(renderer, bmp);
-        SDL_FreeSurface(bmp);
-        if (texture == nullptr)
-        {
-            logSDLError(std::cout, "SDL_CreateTextureFromSurface");
-        }
-    }
-    else
-    {
-        logSDLError(std::cout, "SDL_LoadBMP");
+        logSDLError(std::cout, "IMG_LoadTexture");
     }
     return texture;
 }
