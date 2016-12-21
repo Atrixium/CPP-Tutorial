@@ -43,8 +43,29 @@ int main(int argc, char **argv)
     SDL_Texture *image = loadTexture("Images/image.bmp",renderer);
     if(background == nullptr || image == nullptr)
     {
-        cleanup(background, image, renderer, window);
+        logSDLError(std::cout, "loadTexture");
+        SDL_DestroyTexture(background);
+        SDL_DestroyTexture(image);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
     }
+
+    SDL_RenderClear(renderer);
+
+    int bW, bH;
+    SDL_QueryTexture(background,NULL,NULL,&bW, &bH);
+    for (int i = 0; i < SCREEN_HEIGHT; i = i + bH)
+    {
+        for (int j = 0; j < SCREEN_WIDTH; j = j + bW)
+        {
+            renderTexture(background, renderer, j, i);
+        }
+    }
+    SDL_RenderPresent(renderer);
+    SDL_Delay(2000);
+
 
     return 0;
 }
@@ -62,7 +83,7 @@ SDL_Texture* loadTexture(const std::string &path, SDL_Renderer *renderer)
     SDL_Surface *bmp = SDL_LoadBMP(path.c_str());
     if (bmp != nullptr)
     {
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, bmp);
+        texture = SDL_CreateTextureFromSurface(renderer, bmp);
         SDL_FreeSurface(bmp);
         if (texture == nullptr)
         {
