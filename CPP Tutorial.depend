@@ -1,8 +1,23 @@
 # depslib dependency file v1.0
-1482305307 source:/home/rob/Dropbox/Projects/C++ Game Tutorial/Dev Files/main.cpp
+1483069834 source:/home/rob/Dropbox/Projects/C++ Game Tutorial/Dev Files/main.cpp
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<iostream>
 	<string>
+	"sdl_helpers.h"
+	"vec2.h"
+
+1483068535 /home/rob/Dropbox/Projects/C++ Game Tutorial/Dev Files/vec2.h
 	<math.h>
+
+1483068368 source:/home/rob/Dropbox/Projects/C++ Game Tutorial/Dev Files/vec2.cpp
+	"vec2.h"
+
+1483069941 /home/rob/Dropbox/Projects/C++ Game Tutorial/Dev Files/sdl_helpers.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	<iostream>
+
+1483069908 source:/home/rob/Dropbox/Projects/C++ Game Tutorial/Dev Files/sdl_helpers.cpp
+	"sdl_helpers.h"
 
