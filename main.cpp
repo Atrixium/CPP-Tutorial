@@ -37,6 +37,11 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    SDL_Event event;
+
+
+    //End of SDL boilerplate inits
+
     if( (IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
     {
         logSDLError(std::cout, "IMG_init");
@@ -44,42 +49,72 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    //End of SDL module inits
+
+    bool quit = false;
+
+    //load textures
+
     SDL_Texture *background = loadTexture("Images/background.png", renderer);
-    SDL_Texture *image = loadTexture("Images/image.png",renderer);
-    if(background == nullptr || image == nullptr)
-    {
-        logSDLError(std::cout, "loadTexture");
-        SDL_DestroyTexture(background);
-        SDL_DestroyTexture(image);
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_RenderClear(renderer);
-
-    int scaler = 3;
-
-    int bW, bH;
-    SDL_QueryTexture(background,NULL,NULL,&bW, &bH);
-    for (int i = 0; i < SCREEN_HEIGHT; i = i + bH / scaler)
-    {
-        for (int j = 0; j < SCREEN_WIDTH; j = j + bW / scaler)
+        SDL_Texture *image = loadTexture("Images/image.png",renderer);
+        if(background == nullptr || image == nullptr)
         {
-            renderTexture(background, renderer, j, i, bW / scaler, bH / scaler);
+            logSDLError(std::cout, "loadTexture");
+            SDL_DestroyTexture(background);
+            SDL_DestroyTexture(image);
+            SDL_DestroyRenderer(renderer);
+            SDL_DestroyWindow(window);
+            SDL_Quit();
+            return 1;
         }
+
+        int mouseX = SCREEN_WIDTH / 2;
+        int mouseY = SCREEN_HEIGHT / 2;
+
+        int iW, iH;
+        SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
+        SDL_SetRenderDrawColor(renderer, 255,255,255,255);
+
+    while(!quit)
+    {
+
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym)
+                    {
+                        case SDLK_q:
+                            quit = true;
+                            break;
+
+                        case SDLK_x:
+                            quit = true;
+                            break;
+                    }
+                    break;
+                case SDL_MOUSEMOTION:
+                    mouseX = event.motion.x;
+                    mouseY = event.motion.y;
+                    break;
+            }
+        }
+
+        SDL_RenderClear(renderer);
+        renderTexture(image, renderer, mouseX - iW/2, mouseY - iH/2);
+
+        SDL_RenderPresent(renderer);
+
     }
-
-    int iW, iH;
-    SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
-    renderTexture(image, renderer, SCREEN_WIDTH/2 - iW/2, SCREEN_HEIGHT/2 - iH/2);
-
-    SDL_RenderPresent(renderer);
-    SDL_Delay(2000);
-
+    //destroy all created objects
     SDL_DestroyTexture(background);
     SDL_DestroyTexture(image);
+    //Destroy SDL Main objects and quit
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

@@ -37,6 +37,10 @@
 			<Add option="-lSDL2_image" />
 		</Linker>
 		<Unit filename="main.cpp" />
+		<Unit filename="sdl_helpers.cpp" />
+		<Unit filename="sdl_helpers.h" />
+		<Unit filename="vec2.cpp" />
+		<Unit filename="vec2.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />
