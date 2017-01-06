@@ -9,6 +9,8 @@ class vec2
     float y;
 
 public:
+    vec2();
+    vec2(int,int);
     float getX() {return x;};
     float getY() {return y;};
     void setX(float i) {x = i ;};

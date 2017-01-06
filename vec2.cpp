@@ -1,5 +1,17 @@
 #include "vec2.h"
 
+vec2::vec2()
+{
+    this->x = 1;
+    this->y = 1;
+}
+
+vec2::vec2(int x, int y)
+{
+    this->x = x;
+    this->y = y;
+}
+
 void vec2::add(vec2 vec)
 {
     this->x += vec.x;

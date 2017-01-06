@@ -68,8 +68,15 @@ int main(int argc, char **argv)
             return 1;
         }
 
-        int mouseX = SCREEN_WIDTH / 2;
-        int mouseY = SCREEN_HEIGHT / 2;
+        //int mouseX = SCREEN_WIDTH / 2;
+        //int mouseY = SCREEN_HEIGHT / 2;
+
+        vec2 position;
+        position.setX(SCREEN_WIDTH / 2);
+        position.setY(SCREEN_HEIGHT / 2);
+
+        vec2 velocity;
+        velocity.setMag(5);
 
         int iW, iH;
         SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
@@ -77,6 +84,22 @@ int main(int argc, char **argv)
 
     while(!quit)
     {
+
+        //vector debug
+//        std::cout << "Position.X: " << position.getX() << std::endl;
+//        std::cout << "Position.Y: " << position.getY() << std::endl;
+//        std::cout << "Velocity.X: " << velocity.getX() << std::endl;
+//        std::cout << "Velocity.Y: " << velocity.getY() << std::endl;
+        position.add(velocity);
+
+        if (position.getX() >= SCREEN_WIDTH - iW | position.getX() <= 0)
+        {
+            velocity.setX(velocity.getX() *-1);
+        }
+        if (position.getY() >= SCREEN_HEIGHT - iH| position.getY() <= 0)
+        {
+            velocity.setY(velocity.getY() *-1);
+        }
 
         while(SDL_PollEvent(&event))
         {
@@ -96,17 +119,27 @@ int main(int argc, char **argv)
                         case SDLK_x:
                             quit = true;
                             break;
+
+                        case SDLK_a:
+                            velocity.setX(velocity.getX() + 1);
+                            velocity.setY(velocity.getY() + 1);
+                            break;
+
+                        case SDLK_z:
+                            velocity.setX(velocity.getX() - 1);
+                            velocity.setY(velocity.getY() - 1);
+                            break;
                     }
                     break;
-                case SDL_MOUSEMOTION:
-                    mouseX = event.motion.x;
-                    mouseY = event.motion.y;
-                    break;
+//                case SDL_MOUSEMOTION:
+//                    mouseX = event.motion.x;
+//                    mouseY = event.motion.y;
+//                    break;
             }
         }
 
         SDL_RenderClear(renderer);
-        renderTexture(image, renderer, mouseX - iW/2, mouseY - iH/2);
+        renderTexture(image, renderer, position.getX(), position.getY());
 
         SDL_RenderPresent(renderer);
 
