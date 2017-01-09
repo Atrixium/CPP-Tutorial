@@ -7,6 +7,8 @@
 
 void logSDLError(std::ostream &os, const std::string &msg);
 
+SDL_Texture* loadTexture(const std::string &path, SDL_Renderer* renderer);
+
 void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y);
 void renderTexture(SDL_Texture *texture, SDL_Renderer *renderer, int x, int y, int w, int h);
 

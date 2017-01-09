@@ -5,7 +5,7 @@ void logSDLError(std::ostream &os, const std::string &msg)
     os << msg << " Error: " << SDL_GetError() << std::endl;
 }
 
-SDL_Texture* loadTexture(const std::string &path, SDL_Renderer *renderer)
+SDL_Texture* loadTexture(const std::string &path, SDL_Renderer* renderer)
 {
     SDL_Texture *texture = IMG_LoadTexture(renderer, path.c_str());
     if (texture == nullptr)
