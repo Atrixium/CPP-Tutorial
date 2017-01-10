@@ -36,7 +36,10 @@
 			<Add option="-lSDL2" />
 			<Add option="-lSDL2_image" />
 		</Linker>
+		<Unit filename="globals.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="mover.cpp" />
+		<Unit filename="mover.h" />
 		<Unit filename="sdl_helpers.cpp" />
 		<Unit filename="sdl_helpers.h" />
 		<Unit filename="vec2.cpp" />
