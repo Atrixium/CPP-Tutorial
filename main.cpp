@@ -4,9 +4,8 @@
 #include <string>
 #include "sdl_helpers.h"
 #include "vec2.h"
-
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+#include "globals.h"
+#include "mover.h"
 
 bool initializeSDL(SDL_Window*& win, SDL_Renderer*& ren);
 
@@ -24,64 +23,25 @@ int main(int argc, char **argv)
     //load textures
 
     SDL_Texture* background = loadTexture("Images/background.png", renderer);
-        SDL_Texture* image = loadTexture("Images/image.png", renderer);
-        if(background == nullptr || image == nullptr)
-        {
-            logSDLError(std::cout, "loadTexture");
-            SDL_DestroyTexture(background);
-            SDL_DestroyTexture(image);
-            SDL_DestroyRenderer(renderer);
-            SDL_DestroyWindow(window);
-            SDL_Quit();
-            return 1;
-        }
+    if(background == nullptr)
+    {
+        logSDLError(std::cout, "loadTexture");
+        SDL_DestroyTexture(background);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
 
-        vec2 mouse;
-
-        vec2 position;
-        position.setX(SCREEN_WIDTH / 2);
-        position.setY(SCREEN_HEIGHT / 2);
-
-        vec2 velocity;
-        velocity.setMag(5);
-
-        int iW, iH;
-        SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
+
+        mover ball(1,1,0,0,0,0,10);
+        ball.loadImage("Images/ball.png", renderer);
+        ball.acceleration.setMag(.1);
 
     bool quit = false;
     while(!quit)
     {
-
-//        //vector debug
-//        std::cout << "Position.X: " << position.getX() << " " << "Position.Y: " << position.getY() << std::endl;
-//        std::cout << "Velocity.X: " << velocity.getX() << " " << "Velocity.Y: " << velocity.getY() << std::endl;
-//        std::cout << "Velocity.Mag: " <<velocity.getMag() << std::endl << std::endl;
-//        std::cout << "Mouse X: " << mouse.getX() << " " << "Mouse Y: " << mouse.getY() << std::endl;
-
-        vec2 acceleration = vec2::sub(mouse, position);
-        acceleration.normalize();
-        acceleration.mult(.5);
-
-        velocity.add(acceleration);
-        position.add(velocity);
-        velocity.limit(10);
-
-//        if ( (position.getX() >= (SCREEN_WIDTH - iW) ) | (position.getX() <= 0))
-//            velocity.setX(velocity.getX() *-1);
-//        if ( (position.getY() >= (SCREEN_HEIGHT - iH) )| (position.getY() <= 0))
-//            velocity.setY(velocity.getY() *-1);
-
-        if (position.getX() > SCREEN_WIDTH)
-            position.setX(0);
-        else if(position.getX() < 0)
-            position.setX(SCREEN_WIDTH);
-
-        if (position.getY() > SCREEN_HEIGHT)
-            position.setY(0);
-        else if (position.getY() < 0)
-            position.setY(SCREEN_HEIGHT);
-
 
         while(SDL_PollEvent(&event))
         {
@@ -103,30 +63,34 @@ int main(int argc, char **argv)
                             break;
 
                         case SDLK_a:
-                            velocity.setMag(velocity.getMag() + 1);
+                            //velocity.setMag(velocity.getMag() + 1);
                             break;
 
                         case SDLK_z:
-                            velocity.setMag(velocity.getMag() - 1);
+                            //velocity.setMag(velocity.getMag() - 1);
                             break;
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    mouse.setX(event.motion.x);
-                    mouse.setY(event.motion.y);
+                    //mouse.setX(event.motion.x);
+                    //mouse.setY(event.motion.y);
                     break;
             }
         }
 
         SDL_RenderClear(renderer);
-        renderTexture(image, renderer, position.getX(), position.getY());
 
+        ball.update();
+        ball.display(renderer);
+        ball.edgeCollision();
         SDL_RenderPresent(renderer);
+
+        std::cout << "ball acceleration x: " << ball.acceleration.getX() <<" Y: " << ball.acceleration.getY() << std::endl;
 
     }
     //destroy all created objects
     SDL_DestroyTexture(background);
-    SDL_DestroyTexture(image);
+
     //Destroy SDL Main objects and quit
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
