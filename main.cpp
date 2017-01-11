@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         ball.loadImage("Images/ball.png", renderer);
         ball.acceleration.setMag(.1);
 
-        vec2 wind(1,0);
+        vec2 wind(5,0);
         vec2 gravity(0,1);
 
     bool quit = false;
