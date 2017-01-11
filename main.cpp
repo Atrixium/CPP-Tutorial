@@ -39,8 +39,12 @@ int main(int argc, char **argv)
         ball.loadImage("Images/ball.png", renderer);
         ball.acceleration.setMag(.1);
 
+        vec2 wind(1,0);
+        vec2 gravity(0,1);
+
     bool quit = false;
     while(!quit)
+
     {
 
         while(SDL_PollEvent(&event))
@@ -75,11 +79,15 @@ int main(int argc, char **argv)
                     //mouse.setX(event.motion.x);
                     //mouse.setY(event.motion.y);
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    ball.applyForce(wind);
+                    break;
             }
         }
 
         SDL_RenderClear(renderer);
 
+        ball.applyForce(gravity);
         ball.update();
         ball.display(renderer);
         ball.edgeCollision();

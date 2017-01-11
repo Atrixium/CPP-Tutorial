@@ -44,4 +44,10 @@ void mover::update()
     velocity.add(acceleration);
     velocity.limit(maxSpeed);
     position.add(velocity);
+    acceleration.mult(0);
+}
+
+void mover::applyForce(vec2 force)
+{
+    acceleration.add(force);
 }

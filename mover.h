@@ -24,6 +24,7 @@ public:
     void display(SDL_Renderer* ren);
     void loadImage(std::string imagePath, SDL_Renderer*& ren);
     void update();
+    void applyForce(vec2 force);
 
 };
 
