@@ -35,12 +35,12 @@ int main(int argc, char **argv)
 
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 
-        mover ball(1,1,0,0,0,0,10);
+        mover ball(0,0,0,0,0,0,20);
         ball.loadImage("Images/ball.png", renderer);
         ball.acceleration.setMag(.1);
 
         vec2 wind(5,0);
-        vec2 gravity(0,1);
+        vec2 gravity(0,.1);
 
     bool quit = false;
     while(!quit)
@@ -73,6 +73,9 @@ int main(int argc, char **argv)
                         case SDLK_z:
                             //velocity.setMag(velocity.getMag() - 1);
                             break;
+                        case SDLK_SPACE:
+                            ball.applyForce(gravity);
+                            break;
                     }
                     break;
                 case SDL_MOUSEMOTION:
@@ -93,7 +96,8 @@ int main(int argc, char **argv)
         ball.edgeCollision();
         SDL_RenderPresent(renderer);
 
-        std::cout << "ball acceleration x: " << ball.acceleration.getX() <<" Y: " << ball.acceleration.getY() << std::endl;
+        std::cout << "ball velocity x: " << ball.velocity.getX() <<" Y: " << ball.velocity.getY() << std::endl;
+        std::cout << "velocity magnitude: " << ball.velocity.getMag() << std::endl;
 
     }
     //destroy all created objects

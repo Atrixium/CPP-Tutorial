@@ -60,16 +60,8 @@ void vec2::normalize()
 
 void vec2::setMag(float mag)
 {
-    if(this->getMag() != 0)
-    {
-        this->normalize();
-        this->mult(mag);
-    }
-    else if( mag > 0 )
-    {
-        this->x = 1 * mag;
-        this->y = 1 * mag;
-    }
+    this->normalize();
+    this->mult(mag);
 }
 
 void vec2::limit(float limit)
