@@ -14,12 +14,20 @@ public:
     vec2 velocity;
     vec2 acceleration;
     float maxSpeed;
+    float mass;
+    int width;
+    int height;
 private:
     SDL_Texture* image;
 
 public:
-    mover(float posX=1, float posY=1, float velX=0, float velY=0, float AccX=0, float AccY=0, float maxS=0);
+    mover(float posX=1, float posY=1, float velX=0, float velY=0, float AccX=0, float AccY=0, float maxS=10, float _mass=1);
     ~mover();
+
+    int getWidth(){return width;};
+    int getHeight(){return height;};
+    int setWidth(int w){width=w;};
+    int setHeight(int h){height=h;};
     void edgeCollision();
     void display(SDL_Renderer* ren);
     void loadImage(std::string imagePath, SDL_Renderer*& ren);

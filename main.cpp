@@ -6,6 +6,7 @@
 #include "vec2.h"
 #include "globals.h"
 #include "mover.h"
+#include <stdlib.h>
 
 bool initializeSDL(SDL_Window*& win, SDL_Renderer*& ren);
 
@@ -35,12 +36,17 @@ int main(int argc, char **argv)
 
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 
-        mover ball(0,0,0,0,0,0,20);
-        ball.loadImage("Images/ball.png", renderer);
-        ball.acceleration.setMag(.1);
+        mover balls[25];
+
+        for(int i=0; i<25; i++)
+        {
+            balls[i].mass = rand() % 100 + 1;
+            balls[i].loadImage("Images/ball.png", renderer);
+            balls[i].setHeight(balls[i].mass + 25);
+            balls[i].setWidth(balls[i].height);
+        }
 
         vec2 wind(5,0);
-        vec2 gravity(0,.1);
 
     bool quit = false;
     while(!quit)
@@ -74,7 +80,6 @@ int main(int argc, char **argv)
                             //velocity.setMag(velocity.getMag() - 1);
                             break;
                         case SDLK_SPACE:
-                            ball.applyForce(gravity);
                             break;
                     }
                     break;
@@ -83,21 +88,34 @@ int main(int argc, char **argv)
                     //mouse.setY(event.motion.y);
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    ball.applyForce(wind);
+//                    ball.applyForce(wind);
+//                    ball2.applyForce(wind);
+                    for(int i=0; i<25; i++)
+                    {
+                        balls[i].applyForce(wind);
+                    }
                     break;
             }
         }
 
         SDL_RenderClear(renderer);
 
-        ball.applyForce(gravity);
-        ball.update();
-        ball.display(renderer);
-        ball.edgeCollision();
+
+        for(int i=0; i<25; i++)
+        {
+            std::cout << "Iteration : " << i << std::endl;
+
+            vec2 gravity(0,GRAV_CONSTANT*balls[i].mass);
+            balls[i].applyForce(gravity);
+            balls[i].update();
+            balls[i].display(renderer);
+            balls[i].edgeCollision();
+            std::cout << "ball " << i << "acceleration: " << balls[i].acceleration.getMag() << std::endl;
+        }
+
         SDL_RenderPresent(renderer);
 
-        std::cout << "ball velocity x: " << ball.velocity.getX() <<" Y: " << ball.velocity.getY() << std::endl;
-        std::cout << "velocity magnitude: " << ball.velocity.getMag() << std::endl;
+        std::cout << "balls[1] : " << balls[1].velocity.getMag() << std::endl;
 
     }
     //destroy all created objects
