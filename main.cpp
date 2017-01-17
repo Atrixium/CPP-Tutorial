@@ -2,13 +2,12 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <string>
+#include <stdlib.h>
+#include <time.h>
 #include "sdl_helpers.h"
 #include "vec2.h"
 #include "globals.h"
 #include "mover.h"
-#include <stdlib.h>
-
-bool initializeSDL(SDL_Window*& win, SDL_Renderer*& ren);
 
 
 int main(int argc, char **argv)
@@ -33,6 +32,8 @@ int main(int argc, char **argv)
         SDL_Quit();
         return 1;
     }
+
+        srand(time(NULL));
 
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 
@@ -115,7 +116,7 @@ int main(int argc, char **argv)
 
         SDL_RenderPresent(renderer);
 
-        std::cout << "balls[1] : " << balls[1].velocity.getMag() << std::endl;
+        //std::cout << "balls[1] : " << balls[1].velocity.getMag() << std::endl;
 
     }
     //destroy all created objects
@@ -127,39 +128,4 @@ int main(int argc, char **argv)
     SDL_Quit();
 
     return 0;
-}
-
-bool initializeSDL(SDL_Window*& win, SDL_Renderer*& ren)
-{
-    if (SDL_Init(SDL_INIT_VIDEO) !=0)
-    {
-        logSDLError(std::cout, "SDL Init");
-        return false;
-    }
-
-    win = SDL_CreateWindow("Hello World", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
-    if (win == nullptr)
-    {
-        logSDLError(std::cout, "SDL_CreateWindow");
-        SDL_Quit();
-        return false;
-    }
-
-    ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (ren == nullptr)
-    {
-        SDL_DestroyWindow(win);
-        logSDLError(std::cout, "SDL_CreateRenderer");
-        SDL_Quit();
-        return false;
-    }
-
-    if( (IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
-    {
-        logSDLError(std::cout, "IMG_init");
-        SDL_Quit();
-        return 1;
-    }
-
-    return true;
 }
