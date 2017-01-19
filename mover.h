@@ -6,10 +6,13 @@
 #include "globals.h"
 #include <SDL2/SDL.h>
 #include <string>
+#include <vector>
 
 class mover
 {
 public:
+    static std::vector<mover*> moverList;
+    int id;
     vec2 position;
     vec2 velocity;
     vec2 acceleration;

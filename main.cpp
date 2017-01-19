@@ -8,6 +8,7 @@
 #include "vec2.h"
 #include "globals.h"
 #include "mover.h"
+#include <memory>
 
 
 int main(int argc, char **argv)
@@ -37,15 +38,20 @@ int main(int argc, char **argv)
 
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 
-        mover balls[25];
-
-        for(int i=0; i<25; i++)
+        for(int i=0; i<50; i++)
         {
-            balls[i].mass = rand() % 100 + 1;
-            balls[i].loadImage("Images/ball.png", renderer);
-            balls[i].setHeight(balls[i].mass + 25);
-            balls[i].setWidth(balls[i].height);
+            new mover();
         }
+
+
+        for(int i=0; i<mover::moverList.size();i++)
+        {
+            mover::moverList[i]->mass = rand() % 100+1;
+            mover::moverList[i]->loadImage("Images/ball.png", renderer);
+            mover::moverList[i]->setHeight(mover::moverList[i]->mass+25);
+            mover::moverList[i]->setWidth(mover::moverList[i]->height);
+        }
+
 
         vec2 wind(5,0);
 
@@ -89,11 +95,9 @@ int main(int argc, char **argv)
                     //mouse.setY(event.motion.y);
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-//                    ball.applyForce(wind);
-//                    ball2.applyForce(wind);
-                    for(int i=0; i<25; i++)
+                    for(int i=0; i < mover::moverList.size(); i++)
                     {
-                        balls[i].applyForce(wind);
+                        mover::moverList[i]->applyForce(wind);
                     }
                     break;
             }
@@ -102,30 +106,34 @@ int main(int argc, char **argv)
         SDL_RenderClear(renderer);
 
 
-        for(int i=0; i<25; i++)
-        {
-            std::cout << "Iteration : " << i << std::endl;
 
-            vec2 gravity(0,GRAV_CONSTANT*balls[i].mass);
-            balls[i].applyForce(gravity);
-            balls[i].update();
-            balls[i].display(renderer);
-            balls[i].edgeCollision();
-            std::cout << "ball " << i << "acceleration: " << balls[i].acceleration.getMag() << std::endl;
+        for(int i=0; i<mover::moverList.size(); i++)
+        {
+            std::cout << "Mover object: " << i << std::endl;
+
+            //vec2 gravity(0,GRAV_CONSTANT*balls[i].mass);
+            vec2 gravity(0,GRAV_CONSTANT*mover::moverList[i]->mass);
+            mover::moverList[i]->applyForce(gravity);
+            mover::moverList[i]->update();
+            mover::moverList[i]->display(renderer);
+            mover::moverList[i]->edgeCollision();
         }
+
+
+        std::cout << "Items in moverList: " << mover::moverList.size() << std::endl;
 
         SDL_RenderPresent(renderer);
 
-        //std::cout << "balls[1] : " << balls[1].velocity.getMag() << std::endl;
-
     }
-    //destroy all created objects
+    //Destroy all created objects
     SDL_DestroyTexture(background);
 
     //Destroy SDL Main objects and quit
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
+    std::cout << "Number of elements in moverList: " << mover::moverList.size() << std::endl;
 
     return 0;
 }
