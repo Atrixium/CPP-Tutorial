@@ -32,6 +32,7 @@ public:
     int setWidth(int w){width=w;};
     int setHeight(int h){height=h;};
     void edgeCollision();
+    void objectCollision(mover*);
     void display(SDL_Renderer* ren);
     void loadImage(std::string imagePath, SDL_Renderer*& ren);
     void update();

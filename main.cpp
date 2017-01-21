@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 
-        for(int i=0; i<50; i++)
+        for(int i=0; i<5; i++)
         {
             new mover();
         }
@@ -46,6 +46,7 @@ int main(int argc, char **argv)
 
         for(int i=0; i<mover::moverList.size();i++)
         {
+            mover::moverList[i]->position.setX(rand() % 640);
             mover::moverList[i]->mass = rand() % 100+1;
             mover::moverList[i]->loadImage("Images/ball.png", renderer);
             mover::moverList[i]->setHeight(mover::moverList[i]->mass+25);
@@ -53,7 +54,9 @@ int main(int argc, char **argv)
         }
 
 
-        vec2 wind(5,0);
+        vec2 wind(10,0);
+
+    bool mousePressed = false;
 
     bool quit = false;
     while(!quit)
@@ -95,10 +98,10 @@ int main(int argc, char **argv)
                     //mouse.setY(event.motion.y);
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    for(int i=0; i < mover::moverList.size(); i++)
-                    {
-                        mover::moverList[i]->applyForce(wind);
-                    }
+                    mousePressed = true;
+                    break;
+                case SDL_MOUSEBUTTONUP:
+                    mousePressed = false;
                     break;
             }
         }
@@ -111,12 +114,19 @@ int main(int argc, char **argv)
         {
             std::cout << "Mover object: " << i << std::endl;
 
-            //vec2 gravity(0,GRAV_CONSTANT*balls[i].mass);
             vec2 gravity(0,GRAV_CONSTANT*mover::moverList[i]->mass);
             mover::moverList[i]->applyForce(gravity);
+            if(mousePressed)
+                mover::moverList[i]->applyForce(wind);
             mover::moverList[i]->update();
             mover::moverList[i]->display(renderer);
             mover::moverList[i]->edgeCollision();
+            for(int j=0; j< mover::moverList.size(); j++)
+            {
+                if( mover::moverList[i]->id != mover::moverList[j]->id )
+                    mover::moverList[i]->objectCollision(mover::moverList[j]);
+            }
+
         }
 
 

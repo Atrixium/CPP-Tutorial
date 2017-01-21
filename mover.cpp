@@ -27,7 +27,7 @@ void mover::edgeCollision()
         position.setX(SCREEN_WIDTH - width);
         velocity.setX(velocity.getX() * -1);
     }
-    else if(position.getX() <= 0)
+    else if (position.getX() <= 0)
     {
         position.setX(0);
         velocity.setX(velocity.getX() * -1);
@@ -38,12 +38,32 @@ void mover::edgeCollision()
         position.setY(SCREEN_HEIGHT - height);
         velocity.setY(velocity.getY() * -1);
     }
-    else if(position.getY() <= 0)
+    else if (position.getY() <= 0)
     {
         position.setY(0);
         velocity.setY(velocity.getY() * -1);
     }
 
+}
+
+void mover::objectCollision(mover* m)
+{
+    //circle-based collision detection
+    vec2 aCenter( (position.getX()) + (width / 2), (position.getY()) + (width / 2) );
+    vec2 bCenter( (m->position.getX()) + (m->width / 2), (m->position.getY()) + (m->height / 2) );
+    vec2 distance = vec2::sub(aCenter,bCenter);
+
+    if ( distance.getMag() < ( (width / 2) + (m->width / 2) ) )
+    {
+        std::cout << "Collision detected between " << id << " & " << m->id << std::endl;
+        vec2 momentum(0,0);
+        momentum.add(m->velocity);
+        momentum.mult(m->mass);
+        distance.setMag(momentum.getMag()/2);
+        applyForce(distance);
+        distance.mult(-1);
+        m->applyForce(distance);
+    }
 }
 
 void mover::display(SDL_Renderer* ren)
